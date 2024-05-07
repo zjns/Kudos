@@ -16,7 +16,7 @@
 
 package com.kanyun.kudos.compiler
 
-import com.kanyun.kudos.BuildConfig
+import kofua.kudos.BuildConfig
 import com.kanyun.kudos.compiler.options.Option
 import com.kanyun.kudos.compiler.options.Options
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption

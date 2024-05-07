@@ -23,6 +23,7 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.lang.reflect.Type
 
+@Suppress("UNCHECKED_CAST")
 object KudosAndroidJsonReader {
     inline fun <reified T> fromJson(json: String): T {
         return fromJson(json.reader().buffered(), T::class.java)
@@ -38,7 +39,7 @@ object KudosAndroidJsonReader {
             val jsonReader = JsonReader(bufferedReader)
             adapter.fromJson(jsonReader) as T
         } else {
-            throw IllegalArgumentException("class ${clazz.name} must implement KudosJsonAdapter")
+            throw IllegalArgumentException("class ${clazz.name} must implements KudosJsonAdapter")
         }
     }
 

@@ -24,7 +24,7 @@ import org.codehaus.plexus.logging.Logger
 import org.jetbrains.kotlin.maven.KotlinMavenPluginExtension
 import org.jetbrains.kotlin.maven.PluginOption
 
-val KUDOS_COMPILER_PLUGIN_ID = "com.kanyun.kudos"
+const val KUDOS_COMPILER_PLUGIN_ID = "kofua.kudos"
 
 @Component(role = KotlinMavenPluginExtension::class, hint = "kudos")
 class KudosMavenPluginExtension : KotlinMavenPluginExtension {

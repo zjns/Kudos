@@ -21,6 +21,7 @@ import android.util.JsonToken
 import com.kanyun.kudos.collections.KudosCollection
 import com.kanyun.kudos.collections.KudosList
 import com.kanyun.kudos.collections.KudosSet
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 interface KudosJsonAdapter<T> {
@@ -28,7 +29,7 @@ interface KudosJsonAdapter<T> {
 }
 
 fun parseKudosObject(jsonReader: JsonReader, type: Type): Any? {
-    return if (type is ParameterizedTypeImpl) {
+    return if (type is ParameterizedType) {
         parseKudosObjectInternal(jsonReader, type.rawType, type.actualTypeArguments)
     } else {
         parseKudosObjectInternal(jsonReader, type, arrayOf())
@@ -120,9 +121,9 @@ private fun parseKudosObjectSpecial(
         if (adapter is KudosJsonAdapter<*>) {
             adapter.fromJson(jsonReader)!!
         } else {
-            throw IllegalArgumentException("class ${type.name} must implement KudosJsonAdapter")
+            throw IllegalArgumentException("class ${type.name} must implements KudosJsonAdapter")
         }
     } else {
-        throw IllegalArgumentException("class ${type.typeName} must implement KudosJsonAdapter")
+        throw IllegalArgumentException("class ${type.typeName} must implements KudosJsonAdapter")
     }
 }

@@ -16,7 +16,7 @@
 
 package com.kanyun.kudos.gradle
 
-import com.kanyun.kudos.BuildConfig
+import kofua.kudos.BuildConfig
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
@@ -46,7 +46,7 @@ open class KudosGradlePlugin : KotlinCompilerPluginSupportPlugin {
                 if (kudosExtension.jackson) {
                     config += "${BuildConfig.KOTLIN_PLUGIN_GROUP}:kudos-jackson:${BuildConfig.KOTLIN_PLUGIN_VERSION}"
                 }
-                if (kudosExtension.androidJsonReader) {
+                if (kudosExtension.androidJsonReader || kudosExtension.disableValidator) {
                     config += "${BuildConfig.KOTLIN_PLUGIN_GROUP}:kudos-android-json-reader:${BuildConfig.KOTLIN_PLUGIN_VERSION}"
                 }
                 config += "${BuildConfig.KOTLIN_PLUGIN_GROUP}:kudos-annotations:${BuildConfig.KOTLIN_PLUGIN_VERSION}"
@@ -79,6 +79,9 @@ open class KudosGradlePlugin : KotlinCompilerPluginSupportPlugin {
         }
         if (kudosExtension.androidJsonReader) {
             options += SubpluginOption("androidJsonReader", "true")
+        }
+        if (kudosExtension.disableValidator) {
+            options += SubpluginOption("disableValidator", "true")
         }
         return project.provider { options }
     }

@@ -27,12 +27,8 @@ import com.kanyun.kudos.compiler.KudosNames.KUDOS_VALIDATOR_CLASS_ID
 import com.kanyun.kudos.compiler.k1.symbol.FromJsonFunctionDescriptorImpl
 import com.kanyun.kudos.compiler.options.Options
 import com.kanyun.kudos.compiler.utils.safeAs
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.descriptorUtils.getKotlinTypeFqName
 import org.jetbrains.kotlin.name.Name
@@ -41,11 +37,7 @@ import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeAttributes
-import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class KudosSyntheticResolveExtension(
@@ -72,7 +64,7 @@ class KudosSyntheticResolveExtension(
                 it.getKotlinTypeFqName(false)
             }.toSet()
 
-            if (KUDOS_VALIDATOR !in superTypeNames) {
+            if (!Options.disableValidator() && KUDOS_VALIDATOR !in superTypeNames) {
                 val kudosValidator = thisDescriptor.module.findClassAcrossModuleDependencies(KUDOS_VALIDATOR_CLASS_ID)!!
                 supertypes.add(
                     KotlinTypeFactory.simpleNotNullType(

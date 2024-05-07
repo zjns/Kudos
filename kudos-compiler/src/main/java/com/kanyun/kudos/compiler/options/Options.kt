@@ -47,6 +47,14 @@ object Options {
         "<true/false>",
     )
 
+    @JvmField
+    val disableValidator = Option(
+        "disableValidator",
+        false,
+        "Whether to disable validator generation for AndroidJsonReader.",
+        "<true/false>",
+    )
+
     val all = Options::class.java.declaredFields.filter {
         it.type == Option::class.java
     }.map {

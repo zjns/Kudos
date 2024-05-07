@@ -21,47 +21,19 @@ import com.kanyun.kudos.compiler.KudosNames.JSON_READER_SKIP_VALUE_CALLABLE_ID
 import com.kanyun.kudos.compiler.KudosNames.JSON_TOKEN_CLASS_ID
 import com.kanyun.kudos.compiler.KudosNames.JSON_TOKEN_NULL_IDENTIFIER
 import com.kanyun.kudos.compiler.KudosNames.KUDOS_JSON_ADAPTER_CLASS_ID
+import com.kanyun.kudos.compiler.KudosNames.KUDOS_JSON_NAME_NAME
 import com.kanyun.kudos.compiler.utils.irThis
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.kClassReference
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irBranch
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irContinue
-import org.jetbrains.kotlin.ir.builders.irElseBranch
-import org.jetbrains.kotlin.ir.builders.irEquals
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
-import org.jetbrains.kotlin.ir.builders.irIfThen
-import org.jetbrains.kotlin.ir.builders.irNotEquals
-import org.jetbrains.kotlin.ir.builders.irNull
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.irSetField
-import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.builders.irVararg
-import org.jetbrains.kotlin.ir.builders.irWhen
-import org.jetbrains.kotlin.ir.builders.irWhile
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBranch
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classFqName
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -84,11 +56,14 @@ internal class KudosFromJsonFunctionBuilder(
     private val jsonReader = irFunction.valueParameters.first()
 
     fun generateBody(): KudosFromJsonFunctionBuilder {
-        val fields = ArrayList<IrField>()
+        val fields = mutableMapOf<IrField, String>()
         irClass.properties.forEach { property ->
             if (property.isDelegated) return@forEach
             val backingField = property.backingField ?: return@forEach
-            fields.add(backingField)
+            val annotationJsonName = ((property.getAnnotation(KUDOS_JSON_NAME_NAME)
+                ?.getValueArgument(Name.identifier("name"))
+                    as? IrConst<*>)?.value as? String).orEmpty()
+            fields[backingField] = annotationJsonName
         }
         +irCall(
             pluginContext.referenceFunctions(
@@ -141,10 +116,11 @@ internal class KudosFromJsonFunctionBuilder(
                     },
                 )
                 val branches = ArrayList<IrBranch>()
-                fields.forEach { field ->
+                fields.forEach { (field, annotationJsonName) ->
+                    val jsonName = annotationJsonName.ifEmpty { field.name.asString() }
                     branches.add(
                         irBranch(
-                            irEquals(irGet(name), irString(field.name.asString())),
+                            irEquals(irGet(name), irString(jsonName)),
                             irBlock {
                                 +irSetField(irFunction.irThis(), field, getNextValue(field))
                                 if (kudosStatusField != null) {

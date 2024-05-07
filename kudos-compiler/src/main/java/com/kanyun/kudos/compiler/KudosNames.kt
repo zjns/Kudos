@@ -26,12 +26,14 @@ object KudosNames {
     const val KUDOS_VALIDATOR = "com.kanyun.kudos.validator.KudosValidator"
     const val KUDOS_JSON_ADAPTER = "com.kanyun.kudos.json.reader.adapter.KudosJsonAdapter"
     const val KUDOS_IGNORE = "com.kanyun.kudos.annotations.KudosIgnore"
+    private const val KUDOS_JSON_NAME = "com.kanyun.kudos.annotations.KudosJsonName"
     const val TRANSIENT = "kotlin.jvm.Transient"
 
     // FqName
     val KUDOS_NAME = FqName("com.kanyun.kudos.annotations.Kudos")
     val KUDOS_VALIDATOR_NAME = FqName(KUDOS_VALIDATOR)
     val KUDOS_IGNORE_NAME = FqName(KUDOS_IGNORE)
+    val KUDOS_JSON_NAME_NAME = FqName(KUDOS_JSON_NAME)
     val TRANSIENT_NAME = FqName(TRANSIENT)
 
     // Avoid package relocating

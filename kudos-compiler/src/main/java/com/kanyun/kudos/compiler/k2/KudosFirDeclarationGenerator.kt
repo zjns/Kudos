@@ -73,13 +73,13 @@ class KudosFirDeclarationGenerator(
         register(PREDICATE)
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (Options.isAndroidJsonReaderEnabled(kudosAnnotationValueMap, classSymbol.classId.toString())) {
             if (classSymbol in matchedClasses) {
                 return kudosMethodsNames
             }
         }
-        return super.getCallableNamesForClass(classSymbol)
+        return super.getCallableNamesForClass(classSymbol, context)
     }
 
     @OptIn(SymbolInternals::class)

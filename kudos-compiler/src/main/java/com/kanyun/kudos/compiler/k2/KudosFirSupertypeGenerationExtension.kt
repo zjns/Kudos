@@ -23,12 +23,7 @@ import com.kanyun.kudos.compiler.KudosNames.KUDOS_VALIDATOR_CLASS_ID
 import com.kanyun.kudos.compiler.options.Options
 import com.kanyun.kudos.compiler.utils.safeAs
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -43,14 +38,9 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 /**
@@ -91,7 +81,7 @@ class KudosFirSupertypeGenerationExtension(
         }
 
         val firTypeRefList = mutableListOf<FirResolvedTypeRef>()
-        if (!hasValidator) {
+        if (!hasValidator && !Options.disableValidator()) {
             firTypeRefList += buildResolvedTypeRef {
                 type = KUDOS_VALIDATOR_CLASS_ID.constructClassLikeType(
                     emptyArray(),

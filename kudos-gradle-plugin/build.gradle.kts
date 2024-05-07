@@ -36,7 +36,7 @@ buildConfig {
 gradlePlugin {
     plugins {
         create("KudosGradlePlugin") {
-            id = "com.kanyun.kudos"
+            id = "kofua.kudos"
             displayName = "Kudos plugin"
             description = "Kudos plugin"
             implementationClass = "com.kanyun.kudos.gradle.KudosGradlePlugin"

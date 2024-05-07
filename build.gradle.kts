@@ -1,12 +1,13 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
-    kotlin("jvm") version "1.8.20" apply false
+    kotlin("jvm") version "1.9.20" apply false
     id("com.bennyhuo.kotlin.trimindent") version "1.8.20-1.0.0" apply false
     id("org.jetbrains.dokka") version "1.7.10" apply false
     id("com.github.gmazzo.buildconfig") version "2.1.0" apply false
-    id("com.vanniktech.maven.publish") version "0.22.0" apply false
+    id("com.vanniktech.maven.publish") version "0.28.0" apply false
     id("com.bennyhuo.kotlin.plugin.embeddable") version "1.8.1" apply false
     id("com.bennyhuo.kotlin.plugin.embeddable.test") version "1.8.1" apply false
     id("com.diffplug.gradle.spotless") version "6.21.0" apply false
@@ -53,6 +54,20 @@ subprojects {
                 licenseHeaderFile(rootProject.file("spotless/copyright.xml"), "(<[^!?])")
             }
         }
+
+        extensions.configure<PublishingExtension> {
+            repositories {
+                maven {
+                    name = "GithubPackages"
+                    url = uri("https://maven.pkg.github.com/zjns/Kudos")
+                    credentials(PasswordCredentials::class)
+                }
+            }
+        }
+    }
+
+    pluginManager.withPlugin("kotlin") {
+        extensions.getByType<KotlinProjectExtension>().jvmToolchain(8)
     }
 
     pluginManager.withPlugin("java") {

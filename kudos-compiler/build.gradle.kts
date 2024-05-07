@@ -46,7 +46,7 @@ dependencies {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.freeCompilerArgs += listOf(
-    "-Xjvm-default=enable",
+    "-Xjvm-default=all",
     "-Xcontext-receivers",
     "-opt-in=kotlin.RequiresOptIn"
 )
